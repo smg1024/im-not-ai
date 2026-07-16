@@ -6,10 +6,10 @@ set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CLAUDE_HOME="${CLAUDE_HOME:-$HOME/.claude}"
-CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
+CODEX_HOME="${CODEX_HOME:-$HOME/.agents}"
 
-MODE=symlink          # symlink | copy
-DO_CLAUDE=auto        # auto | yes | no
+MODE=symlink   # symlink | copy
+DO_CLAUDE=auto # auto | yes | no
 DO_CODEX=auto
 DO_GEMINI=auto
 FORCE=0
@@ -36,38 +36,60 @@ Options:
   --dry-run       실제 변경 없이 수행할 작업만 출력
   -h, --help      이 도움말
 
-Env overrides: CLAUDE_HOME(기본 ~/.claude), CODEX_HOME(기본 ~/.codex)
+Env overrides: CLAUDE_HOME(기본 ~/.claude), CODEX_HOME(기본 ~/.agents)
 H
 }
 
 while [ $# -gt 0 ]; do
   case "$1" in
-    --copy) MODE=copy ;;
-    --claude-only) DO_CODEX=no; DO_GEMINI=no ;;
-    --codex-only) DO_CLAUDE=no; DO_GEMINI=no ;;
-    --gemini-only) DO_CLAUDE=no; DO_CODEX=no; DO_GEMINI=yes ;;
-    --no-gemini) DO_GEMINI=no ;;
-    --force) FORCE=1 ;;
-    --dry-run) DRYRUN=1 ;;
-    -h|--help) print_help; exit 0 ;;
-    *) echo "unknown arg: $1" >&2; print_help; exit 2 ;;
+  --copy) MODE=copy ;;
+  --claude-only)
+    DO_CODEX=no
+    DO_GEMINI=no
+    ;;
+  --codex-only)
+    DO_CLAUDE=no
+    DO_GEMINI=no
+    ;;
+  --gemini-only)
+    DO_CLAUDE=no
+    DO_CODEX=no
+    DO_GEMINI=yes
+    ;;
+  --no-gemini) DO_GEMINI=no ;;
+  --force) FORCE=1 ;;
+  --dry-run) DRYRUN=1 ;;
+  -h | --help)
+    print_help
+    exit 0
+    ;;
+  *)
+    echo "unknown arg: $1" >&2
+    print_help
+    exit 2
+    ;;
   esac
   shift
 done
 
-run() { echo "+ $*"; [ "$DRYRUN" = 1 ] || "$@"; }
+run() {
+  echo "+ $*"
+  [ "$DRYRUN" = 1 ] || "$@"
+}
 
 # rc: 0=대상 비었음(설치 진행) / 1=이미 우리 심링크(스킵) / 2=충돌(거부)
 prepare_target() {
   local dest="$1" src="$2"
   if [ -L "$dest" ]; then
     if [ "$(readlink "$dest")" = "$src" ]; then
-      echo "ok (already linked): $dest"; return 1
+      echo "ok (already linked): $dest"
+      return 1
     fi
     run mv "$dest" "$dest.bak.$TS"
   elif [ -e "$dest" ]; then
     if [ "$FORCE" != 1 ]; then
-      echo "refuse: $dest 가 이미 있음 (--force 로 백업 후 덮어쓰기 또는 --copy)"; return 2
+      echo "refuse: $dest 가 이미 있음 (--force 로 백업 후 덮어쓰기 또는 --copy)"
+      return 2
     fi
     run mv "$dest" "$dest.bak.$TS"
   fi
@@ -82,8 +104,8 @@ install_one() {
   [ "$rc" = 1 ] && return 0
   [ "$rc" = 2 ] && return 1
   case "$MODE" in
-    symlink) run ln -s "$src" "$dest" ;;
-    copy)    run cp -RL "$src" "$dest" ;;   # -L: references 심링크를 실체로 복사
+  symlink) run ln -s "$src" "$dest" ;;
+  copy) run cp -RL "$src" "$dest" ;; # -L: references 심링크를 실체로 복사
   esac
   echo "installed: $dest"
 }
@@ -118,8 +140,8 @@ if [ "$DO_GEMINI" != no ] && { [ "$DO_GEMINI" = yes ] || command -v gemini >/dev
     echo "+ gemini extensions link $REPO (dry-run)"
   else
     echo "gemini extensions link \"$REPO\" 실행 (확장 등록)..."
-    echo "Y" | gemini extensions link "$REPO" 2>/dev/null && echo "installed: Gemini extension (im-not-ai)" \
-      || echo "  (이미 등록됨 또는 수동 등록 필요: gemini extensions link $REPO)"
+    echo "Y" | gemini extensions link "$REPO" 2>/dev/null && echo "installed: Gemini extension (im-not-ai)" ||
+      echo "  (이미 등록됨 또는 수동 등록 필요: gemini extensions link $REPO)"
   fi
 else
   echo "== Gemini CLI: 건너뜀 (gemini 미감지 — 강제하려면 --gemini-only) =="
