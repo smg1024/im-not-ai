@@ -5,10 +5,10 @@ Humanize KR은 **Claude Code**와 **OpenAI Codex CLI**, **Gemini CLI(Antigravity
 | 도구 | 모드 | 설치 방법 |
 |---|---|---|
 | Claude Code | Fast + strict(5인 파이프라인) | ① 플러그인 마켓플레이스(권장) / ② 클론 + `install.sh` |
-| Codex CLI | Fast(단일 호출)만 | 클론 + `install.sh` |
+| Codex CLI | Fast(단일 호출) + custom agents 12종 | 클론 + `install.sh` |
 | Gemini CLI | Fast(단일 호출)만 | ① `gemini extensions install`(권장) / ② 클론 + `install.sh` |
 
-> Codex와 Gemini는 Claude식 다중 서브에이전트 파이프라인을 결정적으로 실행하지 못해, 단일 호출 Fast Path만 제공합니다. 정밀 검증이 필요하면 Claude Code의 `--strict`를 사용하세요.
+> Codex에는 Claude agent와 같은 역할 지침을 담은 custom agent 12종도 설치됩니다. 다만 현재 Codex용 스킬은 Fast Path를 기본으로 하며, Claude의 `--strict` 오케스트레이션을 그대로 복제하지는 않습니다.
 
 ---
 
@@ -42,7 +42,7 @@ cd im-not-ai
 
 ## Codex CLI
 
-Codex 0.121.0 이상(1급 Skills 지원)이 필요합니다.
+Skills와 custom agents를 지원하는 최신 Codex CLI를 권장합니다.
 
 ```bash
 git clone https://github.com/epoko77-ai/im-not-ai.git
@@ -50,7 +50,7 @@ cd im-not-ai
 ./install.sh --codex-only
 ```
 
-`~/.codex/skills/humanize-korean`에 Fast Path 스킬을 심링크합니다. Codex에서 `$humanize-korean`으로 발동하거나, `/skills` 메뉴에서 선택하세요.
+Fast Path 스킬은 `~/.agents/skills/humanize-korean`에, Claude 호환 custom agent 12종은 `~/.codex/agents/*.toml`에 심링크합니다. Codex에서 `$humanize-korean`으로 발동하거나, 필요할 때 agent 이름을 지정해 위임할 수 있습니다.
 
 ---
 
@@ -74,7 +74,7 @@ cd im-not-ai
 | `--dry-run` | 실제 변경 없이 수행할 작업만 출력 |
 | `-h`, `--help` | 도움말 |
 
-환경변수 `CLAUDE_HOME`(기본 `~/.claude`), `CODEX_HOME`(기본 `~/.codex`)로 설치 위치를 바꿀 수 있습니다.
+환경변수 `CLAUDE_HOME`(기본 `~/.claude`), `CODEX_HOME`(기본 `~/.codex`), `CODEX_SKILLS_HOME`(기본 `~/.agents`)으로 설치 위치를 바꿀 수 있습니다.
 
 ---
 
@@ -104,12 +104,12 @@ cd im-not-ai
 - **"refuse: … 가 이미 있음"** — 해당 경로에 이미 다른 파일/링크가 있습니다. `--force`(백업 후 덮어쓰기) 또는 직접 정리 후 재실행하세요.
 - **스킬이 안 보임** — Claude는 **새 세션**에서 로드됩니다. `claude plugin list`(마켓플레이스 설치) 또는 `ls -l ~/.claude/skills`(스크립트 설치)로 확인하세요. Codex는 `/skills` 메뉴로 확인.
 - **저장소 위치 이동/삭제** — 심링크 설치는 클론한 저장소 경로에 의존합니다. 저장소를 옮기면 `./uninstall.sh`(옛 경로) 후 새 경로에서 `./install.sh`를 다시 실행하거나, 위치 비의존이 필요하면 `--copy`로 설치하세요.
-- **레포 기여 개발** — 이 저장소는 에이전트를 플러그인 컨벤션(`agents/`)에, 스킬을 `.claude/skills/`에 둡니다. 저장소 안에서 직접 테스트하려면 `./install.sh`로 한 번 전역 연결한 뒤(에이전트가 `~/.claude/agents`에서 탐색됨) 사용하세요.
+- **레포 기여 개발** — 이 저장소는 Claude 에이전트를 `claude/agents/`에, 스킬을 `claude/skills/`에 둡니다. 플러그인 매니페스트가 두 경로를 명시하며, 스크립트 설치 시 `~/.claude/{agents,skills}`로 연결됩니다.
 
 ## 요구 사항
 
 - Claude Code: 마켓플레이스/플러그인 지원 버전(`claude plugin` 명령 사용 가능).
-- Codex CLI: 0.121.0 이상(`~/.codex/skills` Skills 지원).
+- Codex CLI: Skills(`~/.agents/skills`)와 custom agents(`$CODEX_HOME/agents`)를 지원하는 최신 버전 권장.
 - Gemini CLI: 0.14.0 이상(`gemini extensions` 명령 사용 가능).
 - macOS·Linux의 `bash`. (Windows는 WSL 권장 — 심링크 때문에.)
 

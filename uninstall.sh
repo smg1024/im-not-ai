@@ -7,6 +7,7 @@ set -euo pipefail
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CLAUDE_HOME="${CLAUDE_HOME:-$HOME/.claude}"
 CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
+CODEX_SKILLS_HOME="${CODEX_SKILLS_HOME:-$HOME/.agents}"
 DRYRUN=0
 
 case "${1:-}" in
@@ -26,11 +27,14 @@ remove_if_ours() {
 }
 
 for s in humanize-korean humanize humanize-redo; do
-  remove_if_ours "$CLAUDE_HOME/skills/$s" "$REPO/.claude/skills/$s"
+  remove_if_ours "$CLAUDE_HOME/skills/$s" "$REPO/claude/skills/$s"
 done
-remove_if_ours "$CODEX_HOME/skills/humanize-korean" "$REPO/codex/skills/humanize-korean"
-for a in "$REPO/agents"/*.md; do
+remove_if_ours "$CODEX_SKILLS_HOME/skills/humanize-korean" "$REPO/codex/skills/humanize-korean"
+for a in "$REPO/claude/agents"/*.md; do
   remove_if_ours "$CLAUDE_HOME/agents/$(basename "$a")" "$a"
+done
+for a in "$REPO/codex/agents"/*.toml; do
+  remove_if_ours "$CODEX_HOME/agents/$(basename "$a")" "$a"
 done
 
 # ---- Gemini CLI ----

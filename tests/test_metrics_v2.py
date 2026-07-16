@@ -1,7 +1,7 @@
 """Tests for humanize-ko v2.0 metrics module.
 
 Runs under pytest OR `python -m unittest`. Imports both the v1.6 metrics
-(for regression checks) and the v2.0 metrics_v2 from this workspace.
+(for regression checks) and the v2.0 metrics_v2 from the Claude references.
 
 Spec:
 - Existing 13 v1.6 cases: re-run verbatim. Regression budget = 0.
@@ -18,11 +18,11 @@ import tempfile
 import unittest
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-PROJECT_ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
+PROJECT_ROOT = os.path.abspath(os.path.join(HERE, ".."))
 
 # v1.6 module location
 V1_DIR = os.path.join(
-    PROJECT_ROOT, ".claude", "skills", "humanize-korean", "references"
+    PROJECT_ROOT, "claude", "skills", "humanize-korean", "references"
 )
 sys.path.insert(0, V1_DIR)
 sys.path.insert(0, HERE)
@@ -30,10 +30,8 @@ sys.path.insert(0, HERE)
 import metrics  # noqa: E402  (v1.6)
 import metrics_v2  # noqa: E402  (v2.0 superset)
 
-BASELINE_PATH = os.path.join(
-    PROJECT_ROOT, "_workspace", "v1.6-2026-05-06", "02_katfish_baseline.json"
-)
-BASELINE_V2_PATH = os.path.join(HERE, "baseline_v2_diff.json")
+BASELINE_PATH = os.path.join(V1_DIR, "baseline.json")
+BASELINE_V2_PATH = os.path.join(V1_DIR, "baseline_v2.json")
 
 
 # ===========================================================================

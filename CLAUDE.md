@@ -18,24 +18,27 @@ im-not-ai/
 ├── CLAUDE.md                      # 본 파일 — 프로젝트 가이드
 ├── README.md / INSTALL.md         # 사용·설치 안내
 ├── .claude-plugin/                # Claude 플러그인 + 마켓플레이스 매니페스트
-│   ├── plugin.json                # skills: ./.claude/skills/ · 에이전트는 루트 agents/ 자동탐색
+│   ├── plugin.json                # skills: ./claude/skills/ · agents: ./claude/agents/
 │   └── marketplace.json           # /plugin marketplace add epoko77-ai/im-not-ai
 ├── gemini-extension.json          # Gemini CLI Extension 매니페스트
 ├── GEMINI.md                      # Gemini 에이전트 컨텍스트 (monolith 룰 인라인)
 ├── commands/                      # Gemini CLI 커스텀 명령 (/humanize-korean, /humanize, /humanize-redo)
 ├── install.sh / uninstall.sh      # Claude·Codex·Gemini 전역 설치/제거 (심링크 기본)
-├── agents/                        # 서브에이전트 12종 (플러그인 컨벤션 — 루트 agents/에 둬야 로드됨)
-│   ├── humanize-monolith.md       # Fast 단일 호출
-│   ├── ai-tell-detector.md · korean-style-rewriter.md
-│   ├── content-fidelity-auditor.md · naturalness-reviewer.md
-│   └── … taxonomist·scholar·distiller 등 지원 7종
-├── .claude/skills/                # 스킬 3종 (humanize-korean·humanize·humanize-redo)
-│   └── humanize-korean/
-│       ├── SKILL.md               # 오케스트레이터 (quick_rules_path: ${CLAUDE_SKILL_DIR}/...)
-│       └── references/            # SSOT — ai-tell-taxonomy·rewriting-playbook·quick-rules 등
-├── codex/skills/humanize-korean/  # Codex Fast Path 스킬
-│   ├── SKILL.md                   # monolith 기반 자가완결
-│   └── references → ../../../.claude/skills/humanize-korean/references   # SSOT 공유 심링크
+├── claude/
+│   ├── agents/                    # Claude 서브에이전트 12종
+│   │   ├── humanize-monolith.md   # Fast 단일 호출
+│   │   ├── ai-tell-detector.md · korean-style-rewriter.md
+│   │   ├── content-fidelity-auditor.md · naturalness-reviewer.md
+│   │   └── … taxonomist·scholar·distiller 등 지원 7종
+│   └── skills/                    # 스킬 3종 (humanize-korean·humanize·humanize-redo)
+│       └── humanize-korean/
+│           ├── SKILL.md           # 오케스트레이터 (quick_rules_path: ${CLAUDE_SKILL_DIR}/...)
+│           └── references/        # SSOT — ai-tell-taxonomy·rewriting-playbook·quick-rules 등
+├── codex/
+│   ├── agents/                    # Codex custom agent 12종 (Claude 정의의 TOML 호환본)
+│   └── skills/humanize-korean/    # Codex Fast Path 스킬
+│       ├── SKILL.md               # monolith 기반 자가완결
+│       └── references → ../../../claude/skills/humanize-korean/references   # SSOT 공유 심링크
 └── _workspace/                    # 런타임 산출물 (run_id별, gitignored)
     └── {YYYY-MM-DD-NNN}/          # 01_input.txt … final.md · summary.md
 ```
@@ -121,6 +124,6 @@ im-not-ai/
 
 ## 참고
 
-- 분류 체계: `.claude/skills/humanize-korean/references/ai-tell-taxonomy.md`
-- 윤문 처방: `.claude/skills/humanize-korean/references/rewriting-playbook.md`
-- 웹 스펙: `.claude/skills/humanize-korean/references/web-service-spec.md`
+- 분류 체계: `claude/skills/humanize-korean/references/ai-tell-taxonomy.md`
+- 윤문 처방: `claude/skills/humanize-korean/references/rewriting-playbook.md`
+- 웹 스펙: `claude/skills/humanize-korean/references/web-service-spec.md`

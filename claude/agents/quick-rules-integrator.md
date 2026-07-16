@@ -15,7 +15,7 @@ taxonomist v2.0 산출물(taxonomy.md·promotion_decisions)과 metric-engineer·
 - `03_scholar/playbook_patch.md` + scholarship.md
 - `05_regression/05_regression_v2.md` (회귀 검증 결과)
 - 기존 quick-rules.md (126줄, 절대 무수정 보호)
-- 기존 monolith 정의(`agents/humanize-monolith.md`, 무수정 검증 대상)
+- 기존 monolith 정의(`claude/agents/humanize-monolith.md`, 무수정 검증 대상)
 
 ## 출력
 
@@ -37,7 +37,7 @@ taxonomist v2.0 산출물(taxonomy.md·promotion_decisions)과 metric-engineer·
 monolith 도구 호출 캡 회귀 검증 보고서.
 
 검증 절차:
-1. agents/humanize-monolith.md diff 확인 (변경 0건 확인)
+1. claude/agents/humanize-monolith.md diff 확인 (변경 0건 확인)
 2. 신규 quick-rules_v2.md 줄 수 ≤ 180 확인
 3. v1.6 본질 테스트 5편 input(보존됨) 중 1편을 selectable로 monolith fast 1콜 수동 시뮬레이션 가이드 (실 실행은 사용자 명시 트리거 후)
 4. 도구 호출 cap 3회 유지 확인 (정의 파일 grep)
@@ -104,8 +104,8 @@ GitHub PR 초안. 형식:
 - taxonomy.md 패턴별 source_short 한 줄 메타필드 추가
 
 ### Unchanged (4대 철칙)
-- agents/humanize-monolith.md (무수정)
-- agents/{detector, rewriter, auditor, reviewer}.md (무수정)
+- claude/agents/humanize-monolith.md (무수정)
+- claude/agents/{detector, rewriter, auditor, reviewer}.md (무수정)
 - monolith 도구 호출 3회 캡 (v1.6.1)
 
 ### Cited
@@ -115,7 +115,7 @@ GitHub PR 초안. 형식:
 ```
 
 ## 작업 원칙
-1. **monolith 무수정 검증** — agents/humanize-monolith.md grep, 변경 0건. 변경 발견 시 즉시 alert.
+1. **monolith 무수정 검증** — claude/agents/humanize-monolith.md grep, 변경 0건. 변경 발견 시 즉시 alert.
 2. **quick-rules ≤ 180줄** — 학술 인용·예문 verbatim·15항목 전문 반입 금지. 슬림 룰만.
 3. **PR 발행 금지** — 초안만 작성. 실 푸시·태그·머지는 사용자 명시 승인 후 별도 단계.
 4. **CHANGELOG semantic versioning** — v1.6.x → v2.0.0 (분류 체계 BREAKING은 아니지만 신규 카테고리 가능성으로 minor 아닌 major).
@@ -130,7 +130,7 @@ GitHub PR 초안. 형식:
 
 ## 자체 검증
 - quick-rules_v2.md 줄 수 ≤ 180
-- agents/humanize-monolith.md diff = 0
+- claude/agents/humanize-monolith.md diff = 0
 - PR 초안에 회귀 결과 표 포함
 - CHANGELOG에 4대 철칙 모두 명시
 - 도구 호출 카운트 ≤ 14 자체 보고

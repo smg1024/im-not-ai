@@ -16,8 +16,8 @@ Versioning:
   redefine them here. Regression-safe.
 - v2.0 adds 14 NEW pure functions for post-editese + T1~T8 detection.
 
-This file lives in `_workspace/v2.0-YYYY-MM-DD/03_metrics/`. Phase 6
-integrator will merge it into the project's references/metrics.py.
+This file lives in `claude/skills/humanize-korean/references/` alongside the
+v1.6 metrics module.
 
 CLI:
     python metrics_v2.py --input run/01_input.txt \
@@ -41,9 +41,9 @@ from typing import Any
 # ---------------------------------------------------------------------------
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
-_PROJECT_ROOT = os.path.abspath(os.path.join(_HERE, "..", "..", ".."))
+_PROJECT_ROOT = os.path.abspath(os.path.join(_HERE, "..", "..", "..", ".."))
 _V1_METRICS_DIR = os.path.join(
-    _PROJECT_ROOT, ".claude", "skills", "humanize-korean", "references"
+    _PROJECT_ROOT, "claude", "skills", "humanize-korean", "references"
 )
 if _V1_METRICS_DIR not in sys.path:
     sys.path.insert(0, _V1_METRICS_DIR)

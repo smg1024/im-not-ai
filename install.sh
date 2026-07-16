@@ -6,7 +6,8 @@ set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CLAUDE_HOME="${CLAUDE_HOME:-$HOME/.claude}"
-CODEX_HOME="${CODEX_HOME:-$HOME/.agents}"
+CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
+CODEX_SKILLS_HOME="${CODEX_SKILLS_HOME:-$HOME/.agents}"
 
 MODE=symlink   # symlink | copy
 DO_CLAUDE=auto # auto | yes | no
@@ -22,7 +23,7 @@ Usage: ./install.sh [options]
 
   설치된 CLI를 자동 감지해 humanize-korean 스킬을 전역 설치한다.
   Claude: ~/.claude/skills/{humanize-korean,humanize,humanize-redo} + ~/.claude/agents/*.md
-  Codex : ~/.codex/skills/humanize-korean
+  Codex : ~/.agents/skills/humanize-korean + ~/.codex/agents/*.toml
   Gemini: gemini extensions link (gemini-extension.json + GEMINI.md + commands/)
 
 Options:
@@ -36,7 +37,8 @@ Options:
   --dry-run       실제 변경 없이 수행할 작업만 출력
   -h, --help      이 도움말
 
-Env overrides: CLAUDE_HOME(기본 ~/.claude), CODEX_HOME(기본 ~/.agents)
+Env overrides: CLAUDE_HOME(기본 ~/.claude), CODEX_HOME(기본 ~/.codex),
+               CODEX_SKILLS_HOME(기본 ~/.agents)
 H
 }
 
@@ -115,9 +117,9 @@ if [ "$DO_CLAUDE" != no ] && { [ "$DO_CLAUDE" = yes ] || command -v claude >/dev
   echo "== Claude Code =="
   run mkdir -p "$CLAUDE_HOME/skills" "$CLAUDE_HOME/agents"
   for s in humanize-korean humanize humanize-redo; do
-    install_one "$REPO/.claude/skills/$s" "$CLAUDE_HOME/skills/$s"
+    install_one "$REPO/claude/skills/$s" "$CLAUDE_HOME/skills/$s"
   done
-  for a in "$REPO/agents"/*.md; do
+  for a in "$REPO/claude/agents"/*.md; do
     install_one "$a" "$CLAUDE_HOME/agents/$(basename "$a")"
   done
 else
@@ -127,8 +129,11 @@ fi
 # ---- Codex ----
 if [ "$DO_CODEX" != no ] && { [ "$DO_CODEX" = yes ] || command -v codex >/dev/null 2>&1; }; then
   echo "== Codex CLI =="
-  run mkdir -p "$CODEX_HOME/skills"
-  install_one "$REPO/codex/skills/humanize-korean" "$CODEX_HOME/skills/humanize-korean"
+  run mkdir -p "$CODEX_SKILLS_HOME/skills" "$CODEX_HOME/agents"
+  install_one "$REPO/codex/skills/humanize-korean" "$CODEX_SKILLS_HOME/skills/humanize-korean"
+  for a in "$REPO/codex/agents"/*.toml; do
+    install_one "$a" "$CODEX_HOME/agents/$(basename "$a")"
+  done
 else
   echo "== Codex CLI: 건너뜀 (codex 미감지 — 강제하려면 --codex-only) =="
 fi
@@ -150,7 +155,7 @@ fi
 echo ""
 echo "완료 (mode=$MODE)."
 echo "  Claude: 새 세션에서 /humanize-korean (또는 /humanize)"
-echo "  Codex : \$humanize-korean"
+echo "  Codex : \$humanize-korean + custom agents 12종"
 echo "  Gemini: 새 세션에서 /humanize-korean (또는 /humanize)"
 echo "  업데이트: ./update.sh (새 버전 자동 감지 + 적용) · 제거: ./uninstall.sh"
 exit 0
